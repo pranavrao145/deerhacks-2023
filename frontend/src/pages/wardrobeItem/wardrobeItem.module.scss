@@ -1,0 +1,17 @@
+.container {
+  display: flex;
+  flex-direction: column;
+  padding: 0 2rem;
+
+  .backButton {
+    position: absolute;
+    bottom: 1.5rem;
+    left: 3rem;
+    cursor: pointer;
+    transition: transform 0.2s ease-in-out;
+  }
+
+  .backButton:hover {
+    transform: scale(1.1);
+  }
+}
