@@ -46,8 +46,8 @@ class User(db.Model, UserMixin):
     email = db.Column(db.String, unique=True, nullable=False)
     password = db.Column(db.String, nullable=False)
     clothing_items = db.relationship(
-        'ClothingItem', secondary=user_clothing_item, back_populates='users')
-    outfits = db.relationship('ClothingItem', backref='user', lazy=True)
+        'ClothingItem', secondary=user_clothing_item, backref='users')
+    outfits = db.relationship('Outfit', backref='user', lazy=True)
 
     def __repr__(self) -> str:
         return f"User('{self.username}')"
@@ -58,12 +58,8 @@ class ClothingItem(db.Model):
     clothing_type = db.Column(db.String, nullable=False)
     color = db.Column(db.String, nullable=False)
     pattern = db.Column(db.String, nullable=False)
-    users = db.relationship(
-        'User', secondary=user_clothing_item, back_populates='clothing_items')
-    outfits = db.relationship(
-        'ClothingItem', secondary=clothing_item_outfit, back_populates='clothing_items')
     occasions = db.relationship(
-        'Occasion', secondary=clothing_item_occasion, back_populates='clothing_items')
+        'Occasion', secondary=clothing_item_occasion, backref='clothing_items')
 
     def __repr__(self) -> str:
         return f"ClothingItem('{self.color} {self.pattern}')"
@@ -73,16 +69,12 @@ class Outfit(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     favourite = db.Column(db.Boolean, nullable=False)
     clothes = db.relationship(
-        'ClothingItem', secondary=clothing_item_outfit, back_populates='outfits')
+        'ClothingItem', secondary=clothing_item_outfit, backref='outfits')
     occasions = db.relationship(
-        'Occasion', secondary=outfit_occasion, back_populates='outfits')
+        'Occasion', secondary=outfit_occasion, backref='outfits')
     user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
 
 
 class Occasion(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String, unique=True, nullable=False)
-    clothing_items = db.relationship(
-        'ClothingItem', secondary=clothing_item_occasion, back_populates='occasions')
-    outfits = db.relationship(
-        'Outfit', secondary=outfit_occasion, back_populates='occasions')
