@@ -1,5 +1,5 @@
-import outfit from "../assets/outfit.jpg";
-import styles from "./Home.module.scss";
+import outfit from "../../assets/outfit.jpg";
+import styles from "./home.module.scss";
 
 export default function Home() {
   const outfits = [
