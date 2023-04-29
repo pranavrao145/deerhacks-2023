@@ -4,17 +4,14 @@
   margin: 2rem auto;
   padding: 0 2rem;
 
-  .header {
+  .buttonsContainer {
     display: flex;
     flex-direction: row;
-    justify-content: space-between;
+    // justify-content: space-between;
     align-items: center;
+    gap: 2rem;
 
-    h2 {
-      margin: 0;
-    }
-
-    .addButton {
+    .button {
       width: fit-content;
       height: auto;
       padding: 1rem;
@@ -26,7 +23,6 @@
       font-size: 14px;
       font-weight: 500;
       cursor: pointer;
-      align-self: flex-end;
     }
   }
 

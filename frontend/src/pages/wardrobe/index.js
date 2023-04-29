@@ -1,4 +1,6 @@
+import { useEffect, useState } from "react";
 import clothingItem from "../../assets/outfit.jpg";
+import ClothingItemForm from "../../components/ClothingItemForm";
 import styles from "./wardrobe.module.scss";
 
 export default function Wardrobe() {
@@ -25,14 +27,47 @@ export default function Wardrobe() {
     },
   ];
 
+  const [showSearchForm, setShowSearchForm] = useState(false);
+  const [showAddForm, setShowAddForm] = useState(false);
+
+  const toggleSearchForm = () => {
+    setShowSearchForm(!showSearchForm);
+  };
+
+  const toggleAddForm = () => {
+    setShowAddForm(!showAddForm);
+  };
+
+  const handleSearchFormSubmit = () => {
+    toggleSearchForm();
+  };
+
+  const handleAddFormSubmit = () => {
+    toggleSearchForm();
+  };
+
   return (
     <div className={styles.container}>
-      <div className={styles.header}>
-        <h2>My Wardrobe</h2>
-        <button type="button" className={styles.addButton}>
-          Add Item
+      <h2>My Wardrobe</h2>
+      <div className={styles.buttonsContainer}>
+        <button
+          type="button"
+          onClick={toggleSearchForm}
+          className={styles.button}
+        >
+          Search for item
+        </button>
+        <button type="button" onClick={toggleAddForm} className={styles.button}>
+          Add item
         </button>
       </div>
+
+      {showSearchForm && (
+        <ClothingItemForm formType="search" onSubmit={handleSearchFormSubmit} />
+      )}
+      {showAddForm && (
+        <ClothingItemForm formType="add" onSubmit={handleAddFormSubmit} />
+      )}
 
       <div className={styles.outfitGrid}>
         {wardrobe.map(({ id, name, img }) => (
