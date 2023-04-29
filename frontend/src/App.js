@@ -21,7 +21,6 @@ function App() {
             <Navbar />
             <Routes>
               <Route path="/" element={<Home />} />
-              <Route path="/login" element={<Login setToken={setToken} />} />
               <Route path="/wardrobe" element={<Wardrobe />} />
               <Route path="/wardrobe/:id" element={<WardrobeItem />} />
               <Route path="/get-recommendation" element={<GetRecommendation />} />
