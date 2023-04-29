@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import clothingItem from "../../assets/outfit.jpg";
 import WardrobeItemForm from "../../components/WardrobeItemForm";
 import styles from "./wardrobe.module.scss";
