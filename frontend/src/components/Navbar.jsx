@@ -22,8 +22,8 @@ export default function Navbar() {
     },
     {
       id: 4,
-      page: "Get Outfit",
-      href: "/get-outfit",
+      page: "Get Recommendation",
+      href: "/get-recommendation",
     },
     {
       id: 5,

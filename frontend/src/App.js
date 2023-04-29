@@ -4,6 +4,7 @@ import Home from "./pages/home";
 import Login from "./pages/login";
 import Wardrobe from "./pages/wardrobe";
 import WardrobeItem from "./pages/wardrobeItem";
+import GetRecommendation from "./pages/getRecommendation";
 
 function App() {
   return (
@@ -15,7 +16,7 @@ function App() {
           <Route path="/login" element={<Login />} />
           <Route path="/wardrobe" element={<Wardrobe />} />
           <Route path="/wardrobe/:id" element={<WardrobeItem />} />
-          <Route path="/get-outfit" />
+          <Route path="/get-recommendation" element={<GetRecommendation />} />
           <Route path="/account" />
         </Routes>
       </BrowserRouter>
