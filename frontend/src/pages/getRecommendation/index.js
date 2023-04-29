@@ -1,13 +1,16 @@
 import { useState, useEffect } from "react"
+import { useNavigate } from "react-router-dom";
 import styles from "./getRecommendation.module.scss";
 
 export default function GetRecommendation() {
   const [occasion, setOccasion] = useState("");
   const [weather, setWeather] = useState("");
   const [timeOfDay, setTimeOfDay] = useState("");
+  const navigate = useNavigate();
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    navigate.push(`/outfits?occasion=${occasion}&weather=${weather}&timeOfDay=${timeOfDay}`);
   };
 
   return (

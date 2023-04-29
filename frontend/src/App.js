@@ -17,6 +17,11 @@ function App() {
           <Route path="/wardrobe" element={<Wardrobe />} />
           <Route path="/wardrobe/:id" element={<WardrobeItem />} />
           <Route path="/get-recommendation" element={<GetRecommendation />} />
+          <Route
+            exact
+            path="/get-recommendation"
+            element={<GetRecommendation />}
+          />
           <Route path="/account" />
         </Routes>
       </BrowserRouter>
