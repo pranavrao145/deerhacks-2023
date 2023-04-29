@@ -5,15 +5,25 @@ export default function ClothingItemForm({ formType }) {
   const [itemType, setItemType] = useState("");
   const [color, setColor] = useState("");
   const [pattern, setPattern] = useState("");
+  const [selectedImage, setSelectedImage] = useState(null);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+  };
 
+  const handleImageUpload = (event) => {
+    const file = event.target.files[0];
+    // do something with the selected file
   };
 
   return (
     <form className={styles.formContainer} onSubmit={handleSubmit}>
-      {formType == "add" && <div>UPLOAD IMAGE FEATURE</div>}
+      {formType === "add" && (
+        <div>
+          <label>Upload image of clothing item</label>
+          <input type="file" onChange={handleImageUpload} />
+        </div>
+      )}
       <label>
         Item Type:
         <select onChange={(e) => setItemType(e.target.value)} value={itemType}>
@@ -49,7 +59,7 @@ export default function ClothingItemForm({ formType }) {
         </select>
       </label>
 
-      <button className={styles.addButton}>Add Course</button>
+      <button className={styles.submitButton}>Submit</button>
     </form>
   );
 }
