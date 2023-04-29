@@ -1,24 +1,20 @@
 import React, { useState, useEffect } from "react";
 import styles from "./WardrobeItemForm.module.scss";
+import axios from "axios";
 
 export default function WardrobeItemForm({ formType }) {
   const [itemType, setItemType] = useState("");
   const [color, setColor] = useState("");
   const [pattern, setPattern] = useState("");
-  const occasions = [
-    {
-      id: 0,
-      text: "Wedding",
-    },
-    {
-      id: 1,
-      text: "Birthday",
-    },
-    {
-      id: 2,
-      text: "Date",
-    },
-  ];
+  const [checkboxComponents, setCheckboxComponents] = useState([]);
+
+  useEffect(() => {
+    axios
+      .get(`${process.env.REACT_APP_SERVER_URL}/get_all_occasions`)
+      .then((response) => {
+        setCheckboxComponents(response.data);
+      });
+  }, []);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -67,10 +63,10 @@ export default function WardrobeItemForm({ formType }) {
       </label>
 
       <label>Occasion:</label>
-      {occasions.map(({ id, text }) => (
+
+      {checkboxComponents.map(({ id, name }) => (
         <label key={id}>
-          <input type="checkbox" clearSearchOnSelect value={text} />
-          {text}
+          <input type="checkbox" clearSearchOnSelect value={name} /> {name}
         </label>
       ))}
 

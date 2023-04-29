@@ -14,7 +14,7 @@ export default function Login(props) {
         password: password,
       })
       .then((response) => {
-        props.setToken(response.data.access_token);
+        props.setToken(response.data.token);
         console.log("token set successfully");
       })
       .catch((error) => {

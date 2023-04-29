@@ -56,18 +56,20 @@ class User(db.Model, UserMixin):
 class ClothingItem(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     clothing_type = db.Column(db.String, nullable=False)
-    color = db.Column(db.String, nullable=False)
+    colour = db.Column(db.String, nullable=False)
     pattern = db.Column(db.String, nullable=False)
+    image = db.Column(db.String, nullable=False)
     occasions = db.relationship(
         'Occasion', secondary=clothing_item_occasion, backref='clothing_items')
 
     def __repr__(self) -> str:
-        return f"ClothingItem('{self.color} {self.pattern}')"
+        return f"ClothingItem('{self.colour} {self.pattern}')"
 
 
 class Outfit(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     favourite = db.Column(db.Boolean, nullable=False)
+    image = db.Column(db.String, nullable=False)
     clothes = db.relationship(
         'ClothingItem', secondary=clothing_item_outfit, backref='outfits')
     occasions = db.relationship(
