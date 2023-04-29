@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
-import styles from "./ClothingItemForm.module.scss";
+import styles from "./WardrobeItemForm.module.scss";
 
-export default function ClothingItemForm({ formType }) {
+export default function WardrobeItemForm({ formType }) {
   const [itemType, setItemType] = useState("");
   const [color, setColor] = useState("");
   const [pattern, setPattern] = useState("");
