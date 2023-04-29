@@ -5,7 +5,6 @@ export default function ClothingItemForm({ formType }) {
   const [itemType, setItemType] = useState("");
   const [color, setColor] = useState("");
   const [pattern, setPattern] = useState("");
-  const [selectedImage, setSelectedImage] = useState(null);
 
   const handleSubmit = async (e) => {
     e.preventDefault();

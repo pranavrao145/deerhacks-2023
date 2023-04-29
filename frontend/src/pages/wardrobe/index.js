@@ -32,10 +32,12 @@ export default function Wardrobe() {
 
   const toggleSearchForm = () => {
     setShowSearchForm(!showSearchForm);
+    setShowAddForm(false);
   };
 
   const toggleAddForm = () => {
     setShowAddForm(!showAddForm);
+    setShowSearchForm(false);
   };
 
   const handleSearchFormSubmit = () => {
@@ -43,23 +45,43 @@ export default function Wardrobe() {
   };
 
   const handleAddFormSubmit = () => {
-    toggleSearchForm();
+    toggleAddForm();
   };
 
   return (
     <div className={styles.container}>
       <h2>My Wardrobe</h2>
       <div className={styles.buttonsContainer}>
-        <button
-          type="button"
-          onClick={toggleSearchForm}
-          className={styles.button}
-        >
-          Search for item
-        </button>
-        <button type="button" onClick={toggleAddForm} className={styles.button}>
-          Add item
-        </button>
+        {!showSearchForm && !showAddForm && (
+          <>
+            <button
+              type="button"
+              onClick={toggleSearchForm}
+              className={styles.button}
+            >
+              Search for item
+            </button>
+            <button
+              type="button"
+              onClick={toggleAddForm}
+              className={styles.button}
+            >
+              Add item
+            </button>
+          </>
+        )}
+        {(showSearchForm || showAddForm) && (
+          <button
+            type="button"
+            onClick={() => {
+              setShowSearchForm(false);
+              setShowAddForm(false);
+            }}
+            className={`${styles.button} ${styles.cancelButton}`}
+          >
+            Cancel
+          </button>
+        )}
       </div>
 
       {showSearchForm && (
