@@ -1,8 +1,9 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import { Link } from "react-router-dom";
 import clothingItem from "../../assets/outfit.jpg";
+import SearchClothingItemForm from "../../components/SearchClothingItemForm";
 import WardrobeItemForm from "../../components/WardrobeItemForm";
 import styles from "./wardrobe.module.scss";
-import { Link } from "react-router-dom";
 
 export default function Wardrobe() {
   const wardrobe = [
@@ -86,10 +87,13 @@ export default function Wardrobe() {
       </div>
 
       {showSearchForm && (
-        <WardrobeItemForm formType="search" onSubmit={handleSearchFormSubmit} />
+        <SearchClothingItemForm
+          formType="search"
+          onSubmit={handleSearchFormSubmit}
+        />
       )}
       {showAddForm && (
-        <WardrobeItemForm formType="add" onSubmit={handleAddFormSubmit} />
+        <SearchClothingItemForm formType="add" onSubmit={handleAddFormSubmit} />
       )}
 
       <div className={styles.outfitGrid}>

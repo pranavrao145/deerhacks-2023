@@ -31,12 +31,6 @@ export default function WardrobeItemForm({ formType }) {
 
   return (
     <form className={styles.formContainer} onSubmit={handleSubmit}>
-      {formType === "add" && (
-        <div>
-          <label>Upload image of clothing item</label>
-          <input type="file" onChange={handleImageUpload} />
-        </div>
-      )}
       <label>
         Item Type:
         <select onChange={(e) => setItemType(e.target.value)} value={itemType}>

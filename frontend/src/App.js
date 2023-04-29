@@ -4,7 +4,9 @@ import Home from "./pages/home";
 import Login from "./pages/login";
 import Wardrobe from "./pages/wardrobe";
 import WardrobeItem from "./pages/wardrobeItem";
+import GetRecommendation from "./pages/getRecommendation";
 import useToken from "./utils/useToken";
+
 
 function App() {
   const { token, setToken } = useToken();
@@ -22,7 +24,12 @@ function App() {
               <Route path="/login" element={<Login setToken={setToken} />} />
               <Route path="/wardrobe" element={<Wardrobe />} />
               <Route path="/wardrobe/:id" element={<WardrobeItem />} />
-              <Route path="/get-outfit" />
+              <Route path="/get-recommendation" element={<GetRecommendation />} />
+          <Route
+            exact
+            path="/get-recommendation"
+            element={<GetRecommendation />}
+          />
               <Route path="/account" />
             </Routes>
           </>
