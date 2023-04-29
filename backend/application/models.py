@@ -58,6 +58,7 @@ class ClothingItem(db.Model):
     clothing_type = db.Column(db.String, nullable=False)
     color = db.Column(db.String, nullable=False)
     pattern = db.Column(db.String, nullable=False)
+    image = db.Column(db.String, nullable=False)
     occasions = db.relationship(
         'Occasion', secondary=clothing_item_occasion, backref='clothing_items')
 
@@ -70,6 +71,7 @@ class Outfit(db.Model):
     favourite = db.Column(db.Boolean, nullable=False)
     clothes = db.relationship(
         'ClothingItem', secondary=clothing_item_outfit, backref='outfits')
+    image = db.Column(db.String, nullable=False)
     occasions = db.relationship(
         'Occasion', secondary=outfit_occasion, backref='outfits')
     user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
