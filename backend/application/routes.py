@@ -65,9 +65,7 @@ def logout():
 
 
 # CLOTHING ITEM ROUTES
-# 1. Add
-# 2. Remove
-# 3. Get Information (ID)
+
 
 @app.route('/add_cl_to_collection')
 @jwt_required()
@@ -81,6 +79,7 @@ def add_cl_to_collection():
     - clothing_type: the type of clothing
     - colour: the colour of the clothing
     - pattern: the colour of the clothing
+    - occasions: array of names of occasions for which this clothing is suitable
 
     Returns JSON with the following:
     - success: true if the item was found in the database and added to the
@@ -89,14 +88,16 @@ def add_cl_to_collection():
     json_content = request.get_json()
 
     information = (json_content.get('clothing_type', None), json_content.get(
-        'colour', None), json_content.get('pattern', None))
+        'colour', None), json_content.get('pattern', None), json_content.get('occasions', None))
     if any(info is None for info in information):
         return jsonify({'error': 'bad request'}), 400
 
-    clothing_type, colour, pattern = information
+    clothing_type, colour, pattern, occasions = information
 
-    clothing_search_result = ClothingItem.query.filter_by(
-        clothing_type=clothing_type, colour=colour, pattern=pattern).first()
+    clothing_search_result = ClothingItem.query.filter(
+        ClothingItem.clothing_type == clothing_type, ClothingItem.colour ==
+        colour, ClothingItem.pattern == pattern, any([occasion.name in
+                                                      occasions for occasion in ClothingItem.occasions])).first()
 
     if clothing_search_result is None:
         return jsonify({'success': False}), 200
