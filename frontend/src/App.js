@@ -3,6 +3,7 @@ import Navbar from "./components/Navbar";
 import Home from "./pages/home";
 import Login from "./pages/login";
 import Wardrobe from "./pages/wardrobe";
+import WardrobeItemDetails from "./components/WardrobeItemDetails";
 
 function App() {
   return (
@@ -13,6 +14,7 @@ function App() {
           <Route path="/" element={<Home />} />
           <Route path="/login" element={<Login />} />
           <Route path="/wardrobe" element={<Wardrobe />} />
+          <Route path="/wardrobe/:id" element={<WardrobeItemDetails />} />
           <Route path="/get-outfit" />
           <Route path="/account" />
         </Routes>
