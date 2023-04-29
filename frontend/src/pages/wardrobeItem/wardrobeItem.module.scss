@@ -3,15 +3,18 @@
   flex-direction: column;
   padding: 0 2rem;
 
-  .backButton {
-    position: absolute;
-    bottom: 1.5rem;
-    left: 3rem;
+  .buttons {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    padding: 1rem;
+  }
+  .button {
     cursor: pointer;
     transition: transform 0.2s ease-in-out;
   }
 
-  .backButton:hover {
+  .button:hover {
     transform: scale(1.1);
   }
 }
