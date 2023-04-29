@@ -12,16 +12,21 @@ export default function Navbar() {
     },
     {
       id: 2,
+      page: "Login",
+      href: "/login",
+    },
+    {
+      id: 3,
       page: "Wardrobe",
       href: "/wardrobe",
     },
     {
-      id: 2,
+      id: 4,
       page: "Get Outfit",
       href: "/get-outfit",
     },
     {
-      id: 3,
+      id: 5,
       page: "Account",
       href: "/account",
     },
