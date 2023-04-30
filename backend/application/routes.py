@@ -120,7 +120,7 @@ def upload_image():
     return jsonify({'asset_url': 'https://play-lh.googleusercontent.com/IeNJWoKYx1waOhfWF6TiuSiWBLfqLb18lmZYXSgsH1fvb8v1IYiZr5aYWe0Gxu-pVZX3'}), 200
 
 
-@app.route('/add_cl_to_database')
+@app.route('/add_cl_to_database', methods=['POST'])
 @jwt_required()
 def add_cl_to_database():
     """
@@ -147,7 +147,13 @@ def add_cl_to_database():
     image_url, clothing_type, colour, pattern, occasions = information
 
     new_clothing_item = ClothingItem(
-        image_url=image_url, clothing_type=clothing_type, colour=colour, pattern=pattern, occasions=occasions)
+        image_url=image_url, clothing_type=clothing_type, colour=colour, pattern=pattern)
+
+    for oc in occasions:
+        occasion = Occasion.query.get(oc)
+        if occasion:
+            print(occasion)
+            new_clothing_item.occasions.append(occasion)
 
     db.session.add(new_clothing_item)
     db.session.commit()

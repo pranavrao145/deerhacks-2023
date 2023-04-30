@@ -27,7 +27,7 @@ export default function WardrobeItemForm() {
       },
     })
       .then((response) => {
-        if (response.success) {
+        if (response.data.success) {
           navigate("/wardrobe");
         } else {
           navigate("/addWithPicture");

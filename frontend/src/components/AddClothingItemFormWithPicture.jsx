@@ -1,13 +1,16 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
 import styles from "./WardrobeItemForm.module.scss";
+import useToken from "../utils/useToken";
 
-export default function WardrobeItemForm(props) {
+export default function WardrobeItemForm() {
   const [itemType, setItemType] = useState("");
   const [color, setColor] = useState("");
   const [pattern, setPattern] = useState("");
   const [checkboxComponents, setCheckboxComponents] = useState([]);
   const [selectedOccasions, setSelectedOccasions] = useState([]);
+  const [image, setImage] = useState("");
+  const { token } = useToken();
 
   useEffect(() => {
     axios
@@ -17,31 +20,10 @@ export default function WardrobeItemForm(props) {
       });
 
     axios
-      .post(`${process.env.REACT_APP_SERVER_URL}/add_cl_to_collection`, {
-        clothing_type: itemType,
-        colour: color,
-        pattern: pattern,
-        occassions: selectedOccasions,
-      })
+      .get(`${process.env.REACT_APP_SERVER_URL}/upload_image`)
       .then((response) => {
-        props.setCheckboxComponents(response.data);
-      })
-      .catch((error) => {
-        console.log(error);
-      });
-
-    axios
-      .post(`${process.env.REACT_APP_SERVER_URL}/add_cl_to_database`, {
-        clothing_type: itemType,
-        colour: color,
-        pattern: pattern,
-        occassions: selectedOccasions,
-      })
-      .then((response) => {
-        props.setCheckboxComponents(response.data);
-      })
-      .catch((error) => {
-        console.log(error);
+        console.log(response.data.asset_url);
+        setImage(response.data.asset_url);
       });
   }, []);
 
@@ -58,6 +40,39 @@ export default function WardrobeItemForm(props) {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+
+    axios({
+      method: "post",
+      url: `${process.env.REACT_APP_SERVER_URL}/add_cl_to_database`,
+      data: {
+        clothing_type: itemType,
+        colour: color,
+        pattern: pattern,
+        occasions: selectedOccasions,
+        image_url: image,
+      },
+      headers: {
+        Authorization: `Bearer ${token}`,
+        "Content-Type": "application/json",
+      },
+    }).catch((error) => {
+      console.log(error);
+    });
+
+    axios({
+      method: "post",
+      url: `${process.env.REACT_APP_SERVER_URL}/add_cl_to_collection`,
+      data: {
+        clothing_type: itemType,
+        colour: color,
+        pattern: pattern,
+      },
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    }).catch((error) => {
+      console.log(error);
+    });
   };
 
   const handleImageUpload = (event) => {
