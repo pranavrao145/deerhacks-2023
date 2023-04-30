@@ -244,7 +244,7 @@ def get_favourite_outfits():
     current_user = User.query.get(current_user_id)
 
     return jsonify([{'id': outfit.id, 'image_url': outfit.image_url} for outfit
-                    in current_user.outfits.filter(Outfit.favourite)])
+                    in current_user.outfits if outfit.favourite])
 
 
 @app.route('/get_outfit_info/<int:outfit_id>')
