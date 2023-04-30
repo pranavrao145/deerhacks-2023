@@ -1,24 +1,60 @@
 import React, { useState, useEffect } from "react";
+import axios from "axios";
 import styles from "./WardrobeItemForm.module.scss";
 
-export default function WardrobeItemForm({ formType }) {
+export default function WardrobeItemForm(props) {
   const [itemType, setItemType] = useState("");
   const [color, setColor] = useState("");
   const [pattern, setPattern] = useState("");
-  const occasions = [
-    {
-      id: 0,
-      text: "Wedding",
-    },
-    {
-      id: 1,
-      text: "Birthday",
-    },
-    {
-      id: 2,
-      text: "Date",
-    },
-  ];
+  const [checkboxComponents, setCheckboxComponents] = useState([]);
+  const [selectedOccasions, setSelectedOccasions] = useState([]);
+
+  useEffect(() => {
+    axios
+      .get(`${process.env.REACT_APP_SERVER_URL}/get_all_occasions`)
+      .then((response) => {
+        setCheckboxComponents(response.data);
+      });
+
+    axios
+      .post(`${process.env.REACT_APP_SERVER_URL}/add_cl_to_collection`, {
+        clothing_type: itemType,
+        colour: color,
+        pattern: pattern,
+        occassions: selectedOccasions,
+      })
+      .then((response) => {
+        props.setCheckboxComponents(response.data);
+      })
+      .catch((error) => {
+        console.log(error);
+      });
+
+    axios
+      .post(`${process.env.REACT_APP_SERVER_URL}/add_cl_to_database`, {
+        clothing_type: itemType,
+        colour: color,
+        pattern: pattern,
+        occassions: selectedOccasions,
+      })
+      .then((response) => {
+        props.setCheckboxComponents(response.data);
+      })
+      .catch((error) => {
+        console.log(error);
+      });
+  }, []);
+
+  const handleCheckboxChange = (event) => {
+    const itemName = event.target.value;
+    setSelectedOccasions((prevSelectedItems) => {
+      if (prevSelectedItems.includes(itemName)) {
+        return prevSelectedItems.filter((item) => item !== itemName);
+      } else {
+        return [...prevSelectedItems, itemName];
+      }
+    });
+  };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -31,12 +67,10 @@ export default function WardrobeItemForm({ formType }) {
 
   return (
     <form className={styles.formContainer} onSubmit={handleSubmit}>
-      {formType === "add" && (
-        <div>
-          <label>Upload image of clothing item</label>
-          <input type="file" onChange={handleImageUpload} />
-        </div>
-      )}
+      <div>
+        <label>Upload image of clothing item</label>
+        <input type="file" onChange={handleImageUpload} />
+      </div>
       <label>
         Item Type:
         <select onChange={(e) => setItemType(e.target.value)} value={itemType}>
@@ -73,10 +107,15 @@ export default function WardrobeItemForm({ formType }) {
       </label>
 
       <label>Occasion:</label>
-      {occasions.map(({ id, text }) => (
+      {checkboxComponents.map(({ id, name }) => (
         <label key={id}>
-          <input type="checkbox" clearSearchOnSelect value={text} />
-          {text}
+          <input
+            type="checkbox"
+            value={name}
+            checked={selectedOccasions.includes(name)}
+            onChange={handleCheckboxChange}
+          />{" "}
+          {name}
         </label>
       ))}
 

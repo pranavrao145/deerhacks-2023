@@ -161,7 +161,7 @@ def add_cl_to_database():
 
 @app.route('/remove_cl_from_collection/<int:clothing_item_id>')
 @jwt_required()
-def add_cl_to_database(clothing_item_id):
+def remove_cl_from_collection(clothing_item_id):
     """
     Parameters:
     - clothing_item_id: the id of the clothing item to remove from the user's collection
