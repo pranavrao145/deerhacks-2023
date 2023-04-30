@@ -190,10 +190,9 @@ def remove_cl_from_collection(clothing_item_id):
 @jwt_required()
 def get_cl_info(clothing_item_id):
     """
-    Returns all possible information about the clothing item
-    with the given clothing ID. This function assumes a
-    clothing item with the given clothing ID exists in the
-    database.
+    Returns all possible information about the clothing item with the given
+    clothing ID. This function assumes a clothing item with the given clothing
+    ID exists in the database.
 
     Returns in JSON format:
     - id: the id for the clothing
@@ -254,17 +253,16 @@ def get_favourite_outfits():
 @jwt_required()
 def get_outfit_info(outfit_id):
     """
-    Returns all possible information about the outfit
-    with the given outfit ID. This function assumes an
-    outfit with the given outfit ID exists in the
+    Returns all possible information about the outfit with the given outfit ID.
+    This function assumes an outfit with the given outfit ID exists in the
     database.
 
     Returns in JSON format:
     - id: the ID of the outfit
     - image_url: a link to the image for the outfit
     - favourite: whether or not the outfit has been favourited
-    - clothes: an array of clothing item id's for the clothes in the outfit
-    - occasions: an array of occasion id's for the occasions related to the outfit
+    - clothes: an array of clothing item ids for the clothes in the outfit
+    - occasions: an array of occasion ids for the occasions related to the outfit
     - user_id: the ID of the user that owns this outfit
     """
     outfit = Outfit.query.get(outfit_id)
@@ -289,7 +287,7 @@ def add_outfit_to_collection():
     Expects the following in JSON format:
     - image_url: a link to the image for the outfit
     - favourite: whether or not the outfit has been favourited
-    - clothes: an array of clothing item id's for the clothes in the outfit
+    - clothes: an array of clothing item ids for the clothes in the outfit
     - occasions: array of names of occasions for which this outfit is suitable
 
     Returns nothing.
@@ -359,3 +357,29 @@ def get_all_occasions():
     occasions = Occasion.query.all()
 
     return jsonify([{'id': occasion.id, 'name': occasion.name} for occasion in occasions]), 200
+
+# USER ROUTES
+
+
+@app.route('/get_user_info/<int:user_id>')
+def get_user_info(user_id):
+    """
+    Returns all possible information about the user with the given user ID.
+    This function assumes a user with the given user ID exists in the database.
+
+    Returns in JSON format:
+    - id: the id for the user
+    - username: the username of the user
+    - email: the email of the user
+    - clothing_items: an array of ids of clothing_items the user owns
+    - outfits: an array of ids of outfits the user owns
+    """
+    user = User.query().get(user_id)
+
+    return jsonify({
+        'id': user.id,
+        'username': user.username,
+        'email': user.email,
+        'clothing_items': user.clothing_items,
+        'outfits': user.outfits,
+    }), 200
