@@ -3,8 +3,7 @@ from application import app, db
 from flask import request, jsonify
 from flask_jwt_extended import create_access_token, get_jwt, get_jwt_identity, unset_jwt_cookies, jwt_required
 from datetime import datetime, timedelta, timezone
-from application.models import User, ClothingItem, Occasion
-
+from application.models import *
 
 @app.route('/')
 def home() -> str:
@@ -184,8 +183,8 @@ def remove_cl_from_collection(clothing_item_id):
     return jsonify({}), 200
 
 
-@ app.route('/get_cl_info/<int:clothing_item_id>')
-@ jwt_required()
+@app.route('/get_cl_info/<int:clothing_item_id>')
+@jwt_required()
 def get_cl_info(clothing_item_id):
     """
     Returns all possible information about the clothing item
@@ -194,7 +193,8 @@ def get_cl_info(clothing_item_id):
     database.
 
     Returns in JSON format:
-    - image_url: a link to the image for this clothing
+    - id: the id for the clothing
+    - image_url: a link to the image for the clothing
     - clothing_type: the type of clothing
     - colour: the colour of the clothing
     - pattern: the colour of the clothing
@@ -203,6 +203,7 @@ def get_cl_info(clothing_item_id):
     clothing_item = ClothingItem.query.get(clothing_item_id)
 
     return jsonify({
+        'id': clothing_item.id,
         'image_url': clothing_item.image_url,
         'clothing_type': clothing_item.clothing_type,
         'colour': clothing_item.colour,
@@ -210,15 +211,83 @@ def get_cl_info(clothing_item_id):
         'occasions': clothing_item.occasions,
     }), 200
 
+# OUTFIT ROUTES
 
-@ app.route('/get_all_occasions')
+
+@app.route('/get_all_outfits')
+@jwt_required()
+def get_all_outfits():
+    """
+    Returns a list of all the outfits the user has ever generated.
+
+    Returns the following in JSON format (for each outfits):
+    - id: the id of the outfit
+    - image_url: the URL of the image associated with this outfit
+    """
+    current_user_id = get_jwt_identity()
+    current_user = User.query.get(current_user_id)
+
+    return jsonify([{'id': outfit.id, 'image_url': outfit.image_url} for outfit in current_user.outfits])
+
+
+@app.route('/get_favourite_outfits')
+@jwt_required()
+def get_favourite_outfits():
+    """
+    Returns a list of all the current user's favourite outfits.
+
+    Returns the following in JSON format (for each outfit):
+    - id: the id of the outfit
+    - image_url: the URL of the image associated with this outfit
+    """
+    current_user_id = get_jwt_identity()
+    current_user = User.query.get(current_user_id)
+
+    return jsonify([{'id': outfit.id, 'image_url': outfit.image_url} for outfit
+                    in current_user.outfits.filter(Outfit.favourite)])
+
+
+@app.route('/get_outfit_info/<int:outfit_id>')
+@jwt_required()
+def get_outfit_info(outfit_id):
+    """
+    Returns all possible information about the outfit
+    with the given outfit ID. This function assumes an
+    outfit with the given outfit ID exists in the
+    database.
+
+    Returns in JSON format:
+    - id: the ID of the outfit
+    - image_url: a link to the image for the outfit
+    - favourite: whether or not the outfit has been favourited
+    - clothes: an array of clothing item id's for the clothes in the outfit
+    - occasions: an array of occasion id's for the occasions related to the outfit
+    - user_id: the ID of the user that owns this outfit
+    """
+    outfit = Outfit.query.get(outfit_id)
+
+    return jsonify({
+        'id': outfit.id,
+        'image_url': outfit.image_url,
+        'favourite': outfit.favourite,
+        'clothes':  outfit.clothes,
+        'occasions': outfit.occasions,
+        'user_id':  outfit.user_id
+    }), 200
+
+
+# OCCASION ROUTES
+
+
+@app.route('/get_all_occasions')
 def get_all_occasions():
     """
     Returns a list of all possible occasions.
+
+    Returns the following in JSON format (for each occasion):
+    - id: the id of the occasion
+    - name: the name of the occasion
     """
     occasions = Occasion.query.all()
 
-    result = [{'id': occasion.id, 'name': occasion.name}
-              for occasion in occasions]
-
-    return jsonify(result), 200
+    return jsonify([{'id': occasion.id, 'name': occasion.name} for occasion in occasions]), 200

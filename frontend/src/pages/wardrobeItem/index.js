@@ -34,7 +34,7 @@ export default function WardrobeItem() {
 
   return (
     <div className={styles.container}>
-      <WardrobeItemDetails />
+      <WardrobeItemDetails wardrobe_item_id={id} />
       <div className={styles.buttons}>
         <span onClick={goBack} className={styles.button}>
           <HiOutlineArrowNarrowLeft size={35} />
