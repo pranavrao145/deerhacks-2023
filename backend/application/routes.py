@@ -184,8 +184,8 @@ def remove_cl_from_collection(clothing_item_id):
     return jsonify({}), 200
 
 
-@ app.route('/get_cl_info/<int:clothing_item_id>')
-@ jwt_required()
+@app.route('/get_cl_info/<int:clothing_item_id>')
+@jwt_required()
 def get_cl_info(clothing_item_id):
     """
     Returns all possible information about the clothing item
@@ -210,15 +210,36 @@ def get_cl_info(clothing_item_id):
         'occasions': clothing_item.occasions,
     }), 200
 
+# OUTFIT ROUTES
 
-@ app.route('/get_all_occasions')
+
+@app.route('/get_all_outfits')
+@jwt_required()
+def get_all_outfits():
+    """
+    Returns a list of all the outfits the user has ever generated.
+
+    Returns the following in JSON format (for each outfits):
+    - id: the id of the outfit
+    - image_url: the URL of the image associated with this outfit
+    """
+    current_user_id = get_jwt_identity()
+    current_user = User.query.get(current_user_id)
+
+    return jsonify([{'id': outfit.id, 'image_url': outfit.image_url} for outfit in current_user.outfits])
+
+
+# OCCASION ROUTES
+
+@app.route('/get_all_occasions')
 def get_all_occasions():
     """
     Returns a list of all possible occasions.
+
+    Returns the following in JSON format (for each occasion):
+    - id: the id of the occasion
+    - name: the name of the occasion
     """
     occasions = Occasion.query.all()
 
-    result = [{'id': occasion.id, 'name': occasion.name}
-              for occasion in occasions]
-
-    return jsonify(result), 200
+    return jsonify([{'id': occasion.id, 'name': occasion.name} for occasion in occasions]), 200

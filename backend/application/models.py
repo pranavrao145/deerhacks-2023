@@ -69,7 +69,7 @@ class ClothingItem(db.Model):
 class Outfit(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     favourite = db.Column(db.Boolean, nullable=False)
-    image = db.Column(db.String, nullable=False)
+    image_url = db.Column(db.String, nullable=False)
     clothes = db.relationship(
         'ClothingItem', secondary=clothing_item_outfit, backref='outfits')
     occasions = db.relationship(
