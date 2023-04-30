@@ -2,24 +2,31 @@ import React, { useState } from "react";
 import axios from "axios";
 import styles from "./WardrobeItemForm.module.scss";
 import { useNavigate } from "react-router-dom";
+import useToken from "../utils/useToken";
 
-export default function WardrobeItemForm(props) {
+export default function WardrobeItemForm() {
   const [itemType, setItemType] = useState("");
   const [color, setColor] = useState("");
   const [pattern, setPattern] = useState("");
   const navigate = useNavigate();
+  const { token } = useToken();
 
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    axios
-      .post(`${process.env.REACT_APP_SERVER_URL}/add_cl_to_collection`, {
+    axios({
+      method: "post",
+      url: `${process.env.REACT_APP_SERVER_URL}/add_cl_to_collection`,
+      data: {
         clothing_type: itemType,
         colour: color,
         pattern: pattern,
-      })
+      },
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    })
       .then((response) => {
-        console.log('g:' + response.success);
         if (response.success) {
           navigate("/wardrobe");
         } else {

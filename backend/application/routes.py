@@ -4,7 +4,6 @@ from flask import request, jsonify
 from flask_jwt_extended import create_access_token, get_jwt, get_jwt_identity, unset_jwt_cookies, jwt_required
 from datetime import datetime, timedelta, timezone
 from application.models import User, ClothingItem, Occasion
-from flask_login import login_user, logout_user, current_user
 
 
 @app.route('/')
@@ -27,9 +26,7 @@ def create_token():
 
     user = User.query.filter_by(email=email).first()
 
-    login_user(user)
-
-    access_token = create_access_token(identity=email)
+    access_token = create_access_token(identity=user.id)
     response = jsonify({'token': access_token})
 
     return response, 200
@@ -60,14 +57,13 @@ def refresh_expiring_jwts(response):
 def logout():
     response = jsonify({"message": "logged out succesfully"})
     unset_jwt_cookies(response)
-    logout_user()
     return response
 
 
 # CLOTHING ITEM ROUTES
 
 
-@app.route('/add_cl_to_collection')
+@app.route('/add_cl_to_collection', methods=['POST'])
 @jwt_required()
 def add_cl_to_collection():
     """
@@ -88,28 +84,29 @@ def add_cl_to_collection():
     json_content = request.get_json()
 
     information = (json_content.get('clothing_type', None), json_content.get(
-        'colour', None), json_content.get('pattern', None), json_content.get('occasions', None))
+        'colour', None), json_content.get('pattern', None))
 
     if any(info is None for info in information):
+        print('teshtoieshithesiothiseoth')
         return jsonify({'error': 'bad request'}), 400
 
-    clothing_type, colour, pattern, occasions = information
+    clothing_type, colour, pattern = information
 
     clothing_search_result = ClothingItem.query.filter(
         ClothingItem.clothing_type == clothing_type, ClothingItem.colour ==
-        colour, ClothingItem.pattern == pattern, any([occasion.name in
-                                                      occasions for occasion in ClothingItem.occasions])).first()
+        colour, ClothingItem.pattern == pattern).first()
 
     if clothing_search_result is None:
         return jsonify({'success': False}), 200
     else:
-        assert isinstance(current_user, User)
+        current_user_id = get_jwt_identity()
+        current_user = User.query.get(current_user_id)
         current_user.clothing_items.append(clothing_search_result)
         db.session.commit()
         return jsonify({'success': True}), 200
 
 
-@app.route('/upload_image')
+@ app.route('/upload_image')
 def upload_image():
     """
     Uploads the image in the JSON payload to a S3 bucket on the cloud and returns a link to the asset.
@@ -124,8 +121,8 @@ def upload_image():
     return jsonify({'asset_url': 'https://play-lh.googleusercontent.com/IeNJWoKYx1waOhfWF6TiuSiWBLfqLb18lmZYXSgsH1fvb8v1IYiZr5aYWe0Gxu-pVZX3'}), 200
 
 
-@app.route('/add_cl_to_database')
-@jwt_required()
+@ app.route('/add_cl_to_database')
+@ jwt_required()
 def add_cl_to_database():
     """
     Adds a piece of clothing to the database with the given payload information (see below).
@@ -159,8 +156,8 @@ def add_cl_to_database():
     return jsonify({}), 200
 
 
-@app.route('/remove_cl_from_collection/<int:clothing_item_id>')
-@jwt_required()
+@ app.route('/remove_cl_from_collection/<int:clothing_item_id>', methods=['POST'])
+@ jwt_required()
 def remove_cl_from_collection(clothing_item_id):
     """
     Parameters:
@@ -173,7 +170,8 @@ def remove_cl_from_collection(clothing_item_id):
     """
     clothing_item = ClothingItem.query.get(clothing_item_id)
 
-    assert isinstance(current_user, User)
+    current_user_id = get_jwt_identity()
+    current_user = User.query.get(current_user_id)
     assert clothing_item in current_user.clothing_items
 
     current_user.clothing_items.remove(clothing_item)
@@ -181,8 +179,8 @@ def remove_cl_from_collection(clothing_item_id):
     return jsonify({}), 200
 
 
-@app.route('/get_cl_info/<int:clothing_item_id>')
-@jwt_required()
+@ app.route('/get_cl_info/<int:clothing_item_id>')
+@ jwt_required()
 def get_cl_info(clothing_item_id):
     """
     Returns all possible information about the clothing item
@@ -208,7 +206,7 @@ def get_cl_info(clothing_item_id):
     }), 200
 
 
-@app.route('/get_all_occasions')
+@ app.route('/get_all_occasions')
 def get_all_occasions():
     """
     Returns a list of all possible occasions.
