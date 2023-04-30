@@ -181,7 +181,31 @@ def add_cl_to_database(clothing_item_id):
     return jsonify({}), 200
 
 
-# OCCASION ROUTES
+@app.route('/get_cl_info/<int:clothing_item_id>')
+@jwt_required()
+def get_cl_info(clothing_item_id):
+    """
+    Returns all possible information about the clothing item
+    with the given clothing ID. This function assumes a
+    clothing item with the given clothing ID exists in the
+    database.
+
+    Returns in JSON format:
+    - image_url: a link to the image for this clothing
+    - clothing_type: the type of clothing
+    - colour: the colour of the clothing
+    - pattern: the colour of the clothing
+    - occasions: array of names of occasions for which this clothing is suitable
+    """
+    clothing_item = ClothingItem.query.get(clothing_item_id)
+
+    return jsonify({
+        'image_url': clothing_item.image_url,
+        'clothing_type': clothing_item.clothing_type,
+        'colour': clothing_item.colour,
+        'pattern': clothing_item.pattern,
+        'occasions': clothing_item.occasions,
+    }), 200
 
 
 @app.route('/get_all_occasions')
