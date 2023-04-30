@@ -58,7 +58,7 @@ class ClothingItem(db.Model):
     clothing_type = db.Column(db.String, nullable=False)
     colour = db.Column(db.String, nullable=False)
     pattern = db.Column(db.String, nullable=False)
-    image = db.Column(db.String, nullable=False)
+    image_url = db.Column(db.String, nullable=False)
     occasions = db.relationship(
         'Occasion', secondary=clothing_item_occasion, backref='clothing_items')
 

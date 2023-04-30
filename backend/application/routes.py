@@ -1,5 +1,5 @@
 import json
-from application import app
+from application import app, db
 from flask import request, jsonify
 from flask_jwt_extended import create_access_token, get_jwt, get_jwt_identity, unset_jwt_cookies, jwt_required
 from datetime import datetime, timedelta, timezone
@@ -65,9 +65,7 @@ def logout():
 
 
 # CLOTHING ITEM ROUTES
-# 1. Add
-# 2. Remove
-# 3. Get Information (ID)
+
 
 @app.route('/add_cl_to_collection')
 @jwt_required()
@@ -81,6 +79,7 @@ def add_cl_to_collection():
     - clothing_type: the type of clothing
     - colour: the colour of the clothing
     - pattern: the colour of the clothing
+    - occasions: array of names of occasions for which this clothing is suitable
 
     Returns JSON with the following:
     - success: true if the item was found in the database and added to the
@@ -89,23 +88,124 @@ def add_cl_to_collection():
     json_content = request.get_json()
 
     information = (json_content.get('clothing_type', None), json_content.get(
-        'colour', None), json_content.get('pattern', None))
+        'colour', None), json_content.get('pattern', None), json_content.get('occasions', None))
+
     if any(info is None for info in information):
         return jsonify({'error': 'bad request'}), 400
 
-    clothing_type, colour, pattern = information
+    clothing_type, colour, pattern, occasions = information
 
-    clothing_search_result = ClothingItem.query.filter_by(
-        clothing_type=clothing_type, colour=colour, pattern=pattern).first()
+    clothing_search_result = ClothingItem.query.filter(
+        ClothingItem.clothing_type == clothing_type, ClothingItem.colour ==
+        colour, ClothingItem.pattern == pattern, any([occasion.name in
+                                                      occasions for occasion in ClothingItem.occasions])).first()
 
     if clothing_search_result is None:
         return jsonify({'success': False}), 200
     else:
         assert isinstance(current_user, User)
         current_user.clothing_items.append(clothing_search_result)
+        db.session.commit()
         return jsonify({'success': True}), 200
 
-# OCCASION ROUTES
+
+@app.route('/upload_image')
+def upload_image():
+    """
+    Uploads the image in the JSON payload to a S3 bucket on the cloud and returns a link to the asset.
+
+    Expects the following in JSON format:
+    - image: the image to upload
+
+    Returns in JSON format:
+    - asset_url: The link to the asset on the cloud
+    """
+    # TODO: unhardcode
+    return jsonify({'asset_url': 'https://play-lh.googleusercontent.com/IeNJWoKYx1waOhfWF6TiuSiWBLfqLb18lmZYXSgsH1fvb8v1IYiZr5aYWe0Gxu-pVZX3'}), 200
+
+
+@app.route('/add_cl_to_database')
+@jwt_required()
+def add_cl_to_database():
+    """
+    Adds a piece of clothing to the database with the given payload information (see below).
+    This function assumes that the piece of clothing does not already exist in the database.
+
+    Expects the following in JSON format:
+    - image_url: a link to the image for this clothing
+    - clothing_type: the type of clothing
+    - colour: the colour of the clothing
+    - pattern: the colour of the clothing
+    - occasions: array of names of occasions for which this clothing is suitable
+
+    Returns nothing.
+    """
+    json_content = request.get_json()
+
+    information = (json_content.get('image_url', None), json_content.get('clothing_type', None), json_content.get(
+        'colour', None), json_content.get('pattern', None), json_content.get('occasions', None))
+
+    if any(info is None for info in information):
+        return jsonify({'error': 'bad request'}), 400
+
+    image_url, clothing_type, colour, pattern, occasions = information
+
+    new_clothing_item = ClothingItem(
+        image_url=image_url, clothing_type=clothing_type, colour=colour, pattern=pattern, occasions=occasions)
+
+    db.session.add(new_clothing_item)
+    db.session.commit()
+
+    return jsonify({}), 200
+
+
+@app.route('/remove_cl_from_collection/<int:clothing_item_id>')
+@jwt_required()
+def add_cl_to_database(clothing_item_id):
+    """
+    Parameters:
+    - clothing_item_id: the id of the clothing item to remove from the user's collection
+
+    Removes the clothing item with the given clothing_item_id from the current
+    user's collection. This function assumes that a clothing item
+    with the given clothing_item_id exists in the database and is in the
+    current user's collection.
+    """
+    clothing_item = ClothingItem.query.get(clothing_item_id)
+
+    assert isinstance(current_user, User)
+    assert clothing_item in current_user.clothing_items
+
+    current_user.clothing_items.remove(clothing_item)
+
+    return jsonify({}), 200
+
+
+@app.route('/get_cl_info/<int:clothing_item_id>')
+@jwt_required()
+def get_cl_info(clothing_item_id):
+    """
+    Returns all possible information about the clothing item
+    with the given clothing ID. This function assumes a
+    clothing item with the given clothing ID exists in the
+    database.
+
+    Returns in JSON format:
+    - image_url: a link to the image for this clothing
+    - clothing_type: the type of clothing
+    - colour: the colour of the clothing
+    - pattern: the colour of the clothing
+    - occasions: array of names of occasions for which this clothing is suitable
+    """
+    clothing_item = ClothingItem.query.get(clothing_item_id)
+
+    return jsonify({
+        'image_url': clothing_item.image_url,
+        'clothing_type': clothing_item.clothing_type,
+        'colour': clothing_item.colour,
+        'pattern': clothing_item.pattern,
+        'occasions': clothing_item.occasions,
+    }), 200
 
 
 @app.route('/get_all_occasions')
