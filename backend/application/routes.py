@@ -276,6 +276,45 @@ def get_outfit_info(outfit_id):
     }), 200
 
 
+@app.route('/add_outfit_to_collection', methods=['POST'])
+@jwt_required()
+def add_outfit_to_collection():
+    """
+    Creates an outfit given the payload information (see below), and adds it to
+    the database and the user's collection.
+
+    Expects the following in JSON format:
+    - image_url: a link to the image for the outfit
+    - favourite: whether or not the outfit has been favourited
+    - clothes: an array of clothing item id's for the clothes in the outfit
+    - occasions: array of names of occasions for which this outfit is suitable
+
+    Returns nothing.
+    """
+    json_content = request.get_json()
+
+    information = (json_content.get('image_url', None), json_content.get(
+        'favourite', None), json_content.get('clothes', None), json_content.get('occasions', None))
+
+    if any(info is None for info in information):
+        return jsonify({'error': 'bad request'}), 400
+
+    image_url, favourite, clothes, occasions = information
+
+    outfit = Outfit(favourite=favourite, image_url=image_url,
+                    clothes=[ClothingItem.query.get(clothing_id) for
+                             clothing_id in clothes],
+                    occasions=[Occasion.query.filter_by(name=occasion.name) for occasion in occasions])
+
+    db.session.add(outfit)
+
+    current_user_id = get_jwt_identity()
+    current_user = User.query.get(current_user_id)
+    current_user.clothing_items.append(outfit)
+    db.session.commit()
+
+    return jsonify({}), 200
+
 # OCCASION ROUTES
 
 
