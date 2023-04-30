@@ -129,6 +129,7 @@ def upload_image():
 def add_cl_to_database():
     """
     Adds a piece of clothing to the database with the given payload information (see below).
+    This function assumes that the piece of clothing does not already exist in the database.
 
     Expects the following in JSON format:
     - image_url: a link to the image for this clothing
@@ -158,11 +159,29 @@ def add_cl_to_database():
     return jsonify({}), 200
 
 
-@app.route('/add_cl_to_database')
+@app.route('/remove_cl_from_collection/<int:clothing_item_id>')
 @jwt_required()
-def add_cl_to_database():
+def add_cl_to_database(clothing_item_id):
+    """
+    Parameters:
+    - clothing_item_id: the id of the clothing item to remove from the user's collection
 
-    # OCCASION ROUTES
+    Removes the clothing item with the given clothing_item_id from the current
+    user's collection. This function assumes that a clothing item
+    with the given clothing_item_id exists in the database and is in the
+    current user's collection.
+    """
+    clothing_item = ClothingItem.query.get(clothing_item_id)
+
+    assert isinstance(current_user, User)
+    assert clothing_item in current_user.clothing_items
+
+    current_user.clothing_items.remove(clothing_item)
+
+    return jsonify({}), 200
+
+
+# OCCASION ROUTES
 
 
 @app.route('/get_all_occasions')
