@@ -3,7 +3,7 @@ from application import app, db
 from flask import request, jsonify
 from flask_jwt_extended import create_access_token, get_jwt, get_jwt_identity, unset_jwt_cookies, jwt_required
 from datetime import datetime, timedelta, timezone
-from application.models import User, ClothingItem, Occasion
+from application.models import *
 
 
 @app.route('/')
@@ -229,7 +229,24 @@ def get_all_outfits():
     return jsonify([{'id': outfit.id, 'image_url': outfit.image_url} for outfit in current_user.outfits])
 
 
+@app.route('/get_favourite_outfits')
+@jwt_required()
+def get_favourite_outfits():
+    """
+    Returns a list of all the current user's favourite outfits.
+
+    Returns the following in JSON format (for each outfit):
+    - id: the id of the outfit
+    - image_url: the URL of the image associated with this outfit
+    """
+    current_user_id = get_jwt_identity()
+    current_user = User.query.get(current_user_id)
+
+    return jsonify([{'id': outfit.id, 'image_url': outfit.image_url} for outfit
+                    in current_user.outfits.filter(Outfit.favourite)])
+
 # OCCASION ROUTES
+
 
 @app.route('/get_all_occasions')
 def get_all_occasions():
