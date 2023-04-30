@@ -5,6 +5,7 @@ from flask_jwt_extended import create_access_token, get_jwt, get_jwt_identity, u
 from datetime import datetime, timedelta, timezone
 from application.models import *
 
+
 @app.route('/')
 def home() -> str:
     return 'Hello World'
@@ -180,6 +181,8 @@ def remove_cl_from_collection(clothing_item_id):
 
     current_user.clothing_items.remove(clothing_item)
 
+    db.session.commit()
+
     return jsonify({}), 200
 
 
@@ -311,6 +314,32 @@ def add_outfit_to_collection():
     current_user_id = get_jwt_identity()
     current_user = User.query.get(current_user_id)
     current_user.clothing_items.append(outfit)
+    db.session.commit()
+
+    return jsonify({}), 200
+
+
+@app.route('/remove_outfit_from_collection/<int:outfit_id>', methods=['POST'])
+@jwt_required()
+def remove_outfit_from_collection(outfit_id):
+    """
+    Parameters:
+    - outfit_id: the id of the outfit to remove from the user's collection and the database
+
+    Removes the outfit with the given outfit from the current
+    user's collection and the database. This function assumes that an outfit
+    with the given outfit_id exists in the database and is in the
+    current user's collection.
+    """
+    outfit = Outfit.query.get(outfit_id)
+
+    current_user_id = get_jwt_identity()
+    current_user = User.query.get(current_user_id)
+    assert outfit in current_user.outfits
+
+    current_user.outfits.remove(outfit)
+    db.session.delete(outfit)
+
     db.session.commit()
 
     return jsonify({}), 200
