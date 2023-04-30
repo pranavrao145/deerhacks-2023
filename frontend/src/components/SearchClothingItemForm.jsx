@@ -15,34 +15,6 @@ export default function WardrobeItemForm(props) {
       .then((response) => {
         setCheckboxComponents(response.data);
       });
-
-    axios
-      .post(`${process.env.REACT_APP_SERVER_URL}/add_cl_to_collection`, {
-        clothing_type: itemType,
-        colour: color,
-        pattern: pattern,
-        occassions: selectedOccasions,
-      })
-      .then((response) => {
-        props.setCheckboxComponents(response.data);
-      })
-      .catch((error) => {
-        console.log(error);
-      });
-
-    axios
-      .post(`${process.env.REACT_APP_SERVER_URL}/add_cl_to_database`, {
-        clothing_type: itemType,
-        colour: color,
-        pattern: pattern,
-        occassions: selectedOccasions,
-      })
-      .then((response) => {
-        props.setCheckboxComponents(response.data);
-      })
-      .catch((error) => {
-        console.log(error);
-      });
   }, []);
 
   const handleCheckboxChange = (event) => {
