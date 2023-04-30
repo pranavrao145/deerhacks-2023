@@ -7,11 +7,10 @@
   .buttonsContainer {
     display: flex;
     flex-direction: row;
-    // justify-content: space-between;
     align-items: center;
     gap: 2rem;
 
-    .button {
+    a {
       width: fit-content;
       height: auto;
       padding: 1rem;

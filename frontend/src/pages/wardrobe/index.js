@@ -1,8 +1,5 @@
-import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import clothingItem from "../../assets/outfit.jpg";
-import SearchClothingItemForm from "../../components/SearchClothingItemForm";
-import WardrobeItemForm from "../../components/WardrobeItemForm";
 import styles from "./wardrobe.module.scss";
 
 export default function Wardrobe() {
@@ -29,72 +26,13 @@ export default function Wardrobe() {
     },
   ];
 
-  const [showSearchForm, setShowSearchForm] = useState(false);
-  const [showAddForm, setShowAddForm] = useState(false);
-
-  const toggleSearchForm = () => {
-    setShowSearchForm(!showSearchForm);
-    setShowAddForm(false);
-  };
-
-  const toggleAddForm = () => {
-    setShowAddForm(!showAddForm);
-    setShowSearchForm(false);
-  };
-
-  const handleSearchFormSubmit = () => {
-    toggleSearchForm();
-  };
-
-  const handleAddFormSubmit = () => {
-    toggleAddForm();
-  };
-
   return (
     <div className={styles.container}>
       <h2>My Wardrobe</h2>
       <div className={styles.buttonsContainer}>
-        {!showSearchForm && !showAddForm && (
-          <>
-            <button
-              type="button"
-              onClick={toggleSearchForm}
-              className={styles.button}
-            >
-              Search for item
-            </button>
-            <button
-              type="button"
-              onClick={toggleAddForm}
-              className={styles.button}
-            >
-              Add item
-            </button>
-          </>
-        )}
-        {(showSearchForm || showAddForm) && (
-          <button
-            type="button"
-            onClick={() => {
-              setShowSearchForm(false);
-              setShowAddForm(false);
-            }}
-            className={`${styles.button} ${styles.cancelButton}`}
-          >
-            Cancel
-          </button>
-        )}
+        <Link to={`/search`}>Search for item</Link>
+        <Link to={`/add`}>Add item</Link>
       </div>
-
-      {showSearchForm && (
-        <SearchClothingItemForm
-          formType="search"
-          onSubmit={handleSearchFormSubmit}
-        />
-      )}
-      {showAddForm && (
-        <SearchClothingItemForm formType="add" onSubmit={handleAddFormSubmit} />
-      )}
 
       <div className={styles.outfitGrid}>
         {wardrobe.map(({ id, name, img }) => (
