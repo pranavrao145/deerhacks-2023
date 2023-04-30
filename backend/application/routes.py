@@ -1,5 +1,5 @@
 import json
-from application import app
+from application import app, db
 from flask import request, jsonify
 from flask_jwt_extended import create_access_token, get_jwt, get_jwt_identity, unset_jwt_cookies, jwt_required
 from datetime import datetime, timedelta, timezone
@@ -89,6 +89,7 @@ def add_cl_to_collection():
 
     information = (json_content.get('clothing_type', None), json_content.get(
         'colour', None), json_content.get('pattern', None), json_content.get('occasions', None))
+
     if any(info is None for info in information):
         return jsonify({'error': 'bad request'}), 400
 
@@ -104,9 +105,64 @@ def add_cl_to_collection():
     else:
         assert isinstance(current_user, User)
         current_user.clothing_items.append(clothing_search_result)
+        db.session.commit()
         return jsonify({'success': True}), 200
 
-# OCCASION ROUTES
+
+@app.route('/upload_image')
+def upload_image():
+    """
+    Uploads the image in the JSON payload to a S3 bucket on the cloud and returns a link to the asset.
+
+    Expects the following in JSON format:
+    - image: the image to upload
+
+    Returns in JSON format:
+    - asset_url: The link to the asset on the cloud
+    """
+    # TODO: unhardcode
+    return jsonify({'asset_url': 'https://play-lh.googleusercontent.com/IeNJWoKYx1waOhfWF6TiuSiWBLfqLb18lmZYXSgsH1fvb8v1IYiZr5aYWe0Gxu-pVZX3'}), 200
+
+
+@app.route('/add_cl_to_database')
+@jwt_required()
+def add_cl_to_database():
+    """
+    Adds a piece of clothing to the database with the given payload information (see below).
+
+    Expects the following in JSON format:
+    - image_url: a link to the image for this clothing
+    - clothing_type: the type of clothing
+    - colour: the colour of the clothing
+    - pattern: the colour of the clothing
+    - occasions: array of names of occasions for which this clothing is suitable
+
+    Returns nothing.
+    """
+    json_content = request.get_json()
+
+    information = (json_content.get('image_url', None), json_content.get('clothing_type', None), json_content.get(
+        'colour', None), json_content.get('pattern', None), json_content.get('occasions', None))
+
+    if any(info is None for info in information):
+        return jsonify({'error': 'bad request'}), 400
+
+    image_url, clothing_type, colour, pattern, occasions = information
+
+    new_clothing_item = ClothingItem(
+        image_url=image_url, clothing_type=clothing_type, colour=colour, pattern=pattern, occasions=occasions)
+
+    db.session.add(new_clothing_item)
+    db.session.commit()
+
+    return jsonify({}), 200
+
+
+@app.route('/add_cl_to_database')
+@jwt_required()
+def add_cl_to_database():
+
+    # OCCASION ROUTES
 
 
 @app.route('/get_all_occasions')
