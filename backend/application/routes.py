@@ -75,7 +75,6 @@ def add_cl_to_collection():
     - clothing_type: the type of clothing
     - colour: the colour of the clothing
     - pattern: the colour of the clothing
-    - occasions: array of names of occasions for which this clothing is suitable
 
     Returns JSON with the following:
     - success: true if the item was found in the database and added to the
@@ -106,7 +105,7 @@ def add_cl_to_collection():
         return jsonify({'success': True}), 200
 
 
-@ app.route('/upload_image')
+@app.route('/upload_image')
 def upload_image():
     """
     Uploads the image in the JSON payload to a S3 bucket on the cloud and returns a link to the asset.
@@ -121,8 +120,8 @@ def upload_image():
     return jsonify({'asset_url': 'https://play-lh.googleusercontent.com/IeNJWoKYx1waOhfWF6TiuSiWBLfqLb18lmZYXSgsH1fvb8v1IYiZr5aYWe0Gxu-pVZX3'}), 200
 
 
-@ app.route('/add_cl_to_database')
-@ jwt_required()
+@app.route('/add_cl_to_database')
+@jwt_required()
 def add_cl_to_database():
     """
     Adds a piece of clothing to the database with the given payload information (see below).
@@ -156,8 +155,8 @@ def add_cl_to_database():
     return jsonify({}), 200
 
 
-@ app.route('/remove_cl_from_collection/<int:clothing_item_id>', methods=['POST'])
-@ jwt_required()
+@app.route('/remove_cl_from_collection/<int:clothing_item_id>', methods=['POST'])
+@jwt_required()
 def remove_cl_from_collection(clothing_item_id):
     """
     Parameters:
