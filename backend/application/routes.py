@@ -5,7 +5,6 @@ from flask_jwt_extended import create_access_token, get_jwt, get_jwt_identity, u
 from datetime import datetime, timedelta, timezone
 from application.models import *
 
-
 @app.route('/')
 def home() -> str:
     return 'Hello World'
