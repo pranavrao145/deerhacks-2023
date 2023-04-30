@@ -271,8 +271,8 @@ def get_outfit_info(outfit_id):
         'id': outfit.id,
         'image_url': outfit.image_url,
         'favourite': outfit.favourite,
-        'clothes':  outfit.clothes,
-        'occasions': outfit.occasions,
+        'clothes':  [clothing.id for clothing in outfit.clothes],
+        'occasions': [occasion.id for occasion in outfit.occasions],
         'user_id':  outfit.user_id
     }), 200
 
