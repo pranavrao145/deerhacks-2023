@@ -194,7 +194,8 @@ def get_cl_info(clothing_item_id):
     database.
 
     Returns in JSON format:
-    - image_url: a link to the image for this clothing
+    - id: the id for the clothing
+    - image_url: a link to the image for the clothing
     - clothing_type: the type of clothing
     - colour: the colour of the clothing
     - pattern: the colour of the clothing
@@ -203,6 +204,7 @@ def get_cl_info(clothing_item_id):
     clothing_item = ClothingItem.query.get(clothing_item_id)
 
     return jsonify({
+        'id': clothing_item.id,
         'image_url': clothing_item.image_url,
         'clothing_type': clothing_item.clothing_type,
         'colour': clothing_item.colour,
@@ -244,6 +246,36 @@ def get_favourite_outfits():
 
     return jsonify([{'id': outfit.id, 'image_url': outfit.image_url} for outfit
                     in current_user.outfits.filter(Outfit.favourite)])
+
+
+@app.route('/get_outfit_info/<int:outfit_id>')
+@jwt_required()
+def get_outfit_info(outfit_id):
+    """
+    Returns all possible information about the outfit
+    with the given outfit ID. This function assumes an
+    outfit with the given outfit ID exists in the
+    database.
+
+    Returns in JSON format:
+    - id: the ID of the outfit
+    - image_url: a link to the image for the outfit
+    - favourite: whether or not the outfit has been favourited
+    - clothes: an array of clothing item id's for the clothes in the outfit
+    - occasions: an array of occasion id's for the occasions related to the outfit
+    - user_id: the ID of the user that owns this outfit
+    """
+    outfit = Outfit.query.get(outfit_id)
+
+    return jsonify({
+        'id': outfit.id,
+        'image_url': outfit.image_url,
+        'favourite': outfit.favourite,
+        'clothes':  outfit.clothes,
+        'occasions': outfit.occasions,
+        'user_id':  outfit.user_id
+    }), 200
+
 
 # OCCASION ROUTES
 
