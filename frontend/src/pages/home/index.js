@@ -1,4 +1,5 @@
 import { useState, useEffect } from "react";
+import { Link } from "react-router-dom";
 import axios from "axios";
 import useToken from "../../utils/useToken";
 import styles from "./home.module.scss";
@@ -30,9 +31,9 @@ export default function Home() {
       <h3>Favourited Outfits</h3>
       <div className={styles.outfitsContainer}>
         {favOutfits.map(({ id, image_url }) => (
-          <div className={styles.imageContainer} key={id}>
+          <Link className={styles.imageContainer} to={`/outfit/${id}`} key={id}>
             <img src={image_url} alt="outfit" />
-          </div>
+          </Link>
         ))}
       </div>
     </div>

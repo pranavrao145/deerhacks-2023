@@ -1,6 +1,7 @@
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import Navbar from "./components/Navbar";
 import Home from "./pages/home";
+import Outfit from "./pages/outfit";
 import Login from "./pages/login";
 import Wardrobe from "./pages/wardrobe";
 import WardrobeItem from "./pages/wardrobeItem";
@@ -23,6 +24,7 @@ function App() {
             <Navbar />
             <Routes>
               <Route path="/" element={<Home />} />
+              <Route path="/outfit/:id" element={<Outfit />} />
               <Route path="/wardrobe" element={<Wardrobe />} />
               <Route path="/wardrobe/:id" element={<WardrobeItem />} />
               <Route path="/search" element={<Search />} />
